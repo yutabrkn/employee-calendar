@@ -413,12 +413,12 @@ function changeMonth(amount) {
 
   renderCalendar();
 }
-  function renderCalendar() {
+function renderCalendar() {
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
-  const monthNames = [
+  const names = [
     "January", "February", "March",
     "April", "May", "June",
     "July", "August", "September",
@@ -426,12 +426,12 @@ function changeMonth(amount) {
   ];
 
   document.getElementById("monthTitle").textContent =
-    monthNames[month] + " " + year;
+    names[month] + " " + year;
 
   const firstDay =
     new Date(year, month, 1).getDay();
 
-  const daysInMonth =
+  const totalDays =
     new Date(year, month + 1, 0).getDate();
 
   const calendar =
@@ -440,170 +440,40 @@ function changeMonth(amount) {
   calendar.innerHTML = "";
 
   for (let i = 0; i < firstDay; i++) {
-    calendar.appendChild(
-      document.createElement("div")
-    );
+
+    const empty = document.createElement("div");
+
+    calendar.appendChild(empty);
   }
 
-  for (let day = 1; day <= daysInMonth; day++) {
+  for (let day = 1; day <= totalDays; day++) {
 
     const dateKey =
       year + "-" +
       String(month + 1).padStart(2, "0") + "-" +
       String(day).padStart(2, "0");
 
-    const box =
-      document.createElement("div");
+    const box = document.createElement("button");
+
+    box.type = "button";
 
     box.className = "day";
 
-    box.innerHTML =
-      "<b>" + day + "</b>";
+    box.innerHTML = "<b>" + day + "</b>";
 
-    if (attendance[dateKey]) {
+    box.onclick = function(event) {
 
-      let text = "";
+      event.preventDefault();
 
-      if (attendance[dateKey] === "absent")
-        text = "❌ Absent";
-
-      if (attendance[dateKey] === "half")
-        text = "½ Day";
-
-      if (attendance[dateKey] === "full")
-        text = "✓ Full";
-
-      if (attendance[dateKey] === "onehalf")
-        text = "1½ Days";
-
-      if (attendance[dateKey] === "two")
-        text = "2 Days";
-
-      box.innerHTML +=
-        "<div class='status'>" +
-        text +
-        "</div>";
-    }
-
-    if (notes[dateKey]) {
-
-      box.innerHTML +=
-        "<div class='note'>📝 Note</div>";
-    }
-
-    box.onclick = function() {
       openDate(dateKey);
+
     };
 
     calendar.appendChild(box);
   }
 
   updateSummary();
-  }
-  function openDate(dateKey) {
-
-  let choice = prompt(
-    "Date: " + dateKey +
-    "\n\n" +
-    "Choose attendance:" +
-    "\n1 = Absent" +
-    "\n2 = Half Day" +
-    "\n3 = Full Day" +
-    "\n4 = Full + Half" +
-    "\n5 = 2 Full Days"
-  );
-
-  if (choice === null) {
-    return;
-  }
-
-  if (choice === "1") {
-    attendance[dateKey] = "absent";
-  }
-
-  if (choice === "2") {
-    attendance[dateKey] = "half";
-  }
-
-  if (choice === "3") {
-    attendance[dateKey] = "full";
-  }
-
-  if (choice === "4") {
-    attendance[dateKey] = "onehalf";
-  }
-
-  if (choice === "5") {
-    attendance[dateKey] = "two";
-  }
-
-  if (
-    ["1", "2", "3", "4", "5"].includes(choice)
-  ) {
-    saveData();
-  }
-
-  let note = prompt(
-    "Daily Note:",
-    notes[dateKey] || ""
-  );
-
-  if (note !== null) {
-
-    if (note.trim() === "") {
-      delete notes[dateKey];
-    } else {
-      notes[dateKey] = note.trim();
-    }
-
-    saveData();
-  }
-
-  renderCalendar();
-  }
-  function updateSummary() {
-
-  let full = 0;
-  let half = 0;
-  let oneHalf = 0;
-  let total = 0;
-
-  Object.values(attendance).forEach(function(status) {
-
-    if (status === "full") {
-      full++;
-      total += 1;
-    }
-
-    if (status === "half") {
-      half++;
-      total += 0.5;
-    }
-
-    if (status === "onehalf") {
-      oneHalf++;
-      total += 1.5;
-    }
-
-    if (status === "two") {
-      total += 2;
-    }
-
-  });
-
-  document.getElementById("fullDays").textContent = full;
-
-  document.getElementById("halfDays").textContent = half;
-
-  document.getElementById("oneHalfDays").textContent =
-    oneHalf;
-
-  document.getElementById("totalDays").textContent =
-    total % 1 === 0
-      ? total
-      : total.toFixed(1);
-}
-
+       }
 
 renderCalendar();
 
