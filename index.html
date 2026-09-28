@@ -427,7 +427,7 @@ function renderCalendar() {
       "</div>";
 
     box.onclick = function() {
-      openDate(dateKey);
+      openpopup(dateKey);
     };
 
     container.appendChild(box);
@@ -516,7 +516,152 @@ function updateSummary() {
 }
 
 renderCalendar();
+<div id="attendancePopup" style="
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.45);
+z-index:100;
+align-items:flex-end;
+justify-content:center;
+">
 
+  <div style="
+  background:white;
+  width:100%;
+  max-width:500px;
+  border-radius:22px 22px 0 0;
+  padding:22px;
+  box-shadow:0 -5px 25px rgba(0,0,0,0.2);
+  ">
+
+    <h3 id="popupDate">Attendance</h3>
+
+    <button onclick="setAttendance('absent')">
+      ❌ Absent
+    </button>
+
+    <button onclick="setAttendance('half')">
+      ½ Half Day
+    </button>
+
+    <button onclick="setAttendance('full')">
+      ✓ Full Day
+    </button>
+
+    <button onclick="setAttendance('onehalf')">
+      1½ Full + Half
+    </button>
+
+    <button onclick="setAttendance('two')">
+      2 Full Days
+    </button>
+
+    <textarea
+      id="dailyNote"
+      placeholder="Daily note — work, place, money, materials..."
+      style="
+      width:100%;
+      min-height:100px;
+      margin-top:15px;
+      padding:12px;
+      border:1px solid #ddd;
+      border-radius:12px;
+      font-family:inherit;
+      resize:vertical;
+      "
+    ></textarea>
+
+    <button onclick="savePopup()" style="
+    width:100%;
+    margin-top:12px;
+    padding:14px;
+    border:0;
+    border-radius:12px;
+    background:#222;
+    color:white;
+    font-size:16px;
+    ">
+      Save
+    </button>
+
+    <button onclick="closePopup()" style="
+    width:100%;
+    margin-top:8px;
+    padding:12px;
+    border:0;
+    background:#eee;
+    border-radius:12px;
+    ">
+      Cancel
+    </button>
+
+  </div>
+</div>
+      let popupDateKey = "";
+let popupAttendance = "";
+
+
+function openPopup(dateKey) {
+
+  popupDateKey = dateKey;
+
+  popupAttendance =
+    attendance[dateKey] || "";
+
+  document.getElementById("popupDate").textContent =
+    "📅 " + dateKey;
+
+  document.getElementById("dailyNote").value =
+    notes[dateKey] || "";
+
+  document.getElementById("attendancePopup").style.display =
+    "flex";
+}
+
+
+function setAttendance(status) {
+
+  popupAttendance = status;
+
+  document.querySelectorAll(
+    "#attendancePopup button"
+  ).forEach(function(button) {
+    button.style.opacity = "1";
+  });
+}
+
+
+function savePopup() {
+
+  if (popupAttendance !== "") {
+    attendance[popupDateKey] =
+      popupAttendance;
+  }
+
+  const note =
+    document.getElementById("dailyNote").value.trim();
+
+  if (note === "") {
+    delete notes[popupDateKey];
+  } else {
+    notes[popupDateKey] = note;
+  }
+
+  saveData();
+
+  closePopup();
+
+  renderCalendar();
+}
+
+
+function closePopup() {
+
+  document.getElementById(
+    "attendancePopup"
+  ).style.display = "none";
+}
       </script>
 
 </body>
