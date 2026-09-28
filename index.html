@@ -29,7 +29,64 @@
   <div class="calendar">
     <h2>My Calendar</h2>
     <p>My attendance tracker</p>
-  </div>
+  <div>
+  <button onclick="changeMonth(-1)">⬅️</button>
+  <b id="month"></b>
+  <button onclick="changeMonth(1)">➡️</button>
+</div>
 
+<br>
+
+<div id="days" style="
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:5px;">
+</div>
+<script>
+let currentDate = new Date();
+
+function showCalendar() {
+  let year = currentDate.getFullYear();
+  let month = currentDate.getMonth();
+
+  document.getElementById("month").innerText =
+    currentDate.toLocaleString("default", {
+      month: "long",
+      year: "numeric"
+    });
+
+  let days = document.getElementById("days");
+  days.innerHTML = "";
+
+  let firstDay = new Date(year, month, 1).getDay();
+  let totalDays = new Date(year, month + 1, 0).getDate();
+
+  for (let i = 0; i < firstDay; i++) {
+    days.innerHTML += "<div></div>";
+  }
+
+  for (let day = 1; day <= totalDays; day++) {
+    let button = document.createElement("button");
+    button.innerText = day;
+    button.style.padding = "12px 0";
+    button.style.border = "1px solid #ddd";
+    button.style.borderRadius = "8px";
+    button.style.background = "white";
+
+    button.onclick = function() {
+      alert("You selected " + day);
+    };
+
+    days.appendChild(button);
+  }
+}
+
+function changeMonth(amount) {
+  currentDate.setMonth(currentDate.getMonth() + amount);
+  showCalendar();
+}
+
+showCalendar();
+</script>
 </body>
 </html>
