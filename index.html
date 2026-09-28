@@ -20,6 +20,10 @@
       color: #202124;
     }
 
+    button {
+      font-family: inherit;
+    }
+
     /* APP */
     .app {
       min-height: 100vh;
@@ -97,12 +101,27 @@
       font-size: 21px;
     }
 
-    /* DASHBOARD CARDS */
+    /* DASHBOARD */
+    .welcome {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 25px;
+      margin-bottom: 24px;
+    }
+
+    .welcome h2 {
+      margin-bottom: 8px;
+    }
+
+    .welcome p {
+      color: #777;
+      line-height: 1.5;
+    }
+
     .cards {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 14px;
-      margin-bottom: 24px;
     }
 
     .card {
@@ -130,22 +149,6 @@
 
     .page.active {
       display: block;
-    }
-
-    .welcome {
-      background: #ffffff;
-      border-radius: 18px;
-      padding: 25px;
-      margin-bottom: 24px;
-    }
-
-    .welcome h2 {
-      margin-bottom: 8px;
-    }
-
-    .welcome p {
-      color: #777;
-      line-height: 1.5;
     }
 
     /* CALENDAR */
@@ -215,6 +218,138 @@
       font-weight: 600;
     }
 
+    .day-status {
+      margin-top: 10px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .status-half {
+      color: #d38a00;
+    }
+
+    .status-full {
+      color: #188038;
+    }
+
+    .status-onehalf {
+      color: #7b4bc4;
+    }
+
+    .status-two {
+      color: #1467b3;
+    }
+
+    .status-absent {
+      color: #d93025;
+    }
+
+    /* EMPTY PAGES */
+    .empty-card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 30px;
+    }
+
+    /* ATTENDANCE MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 500;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .attendance-modal {
+      width: 100%;
+      max-width: 500px;
+      background: #ffffff;
+      border-radius: 22px 22px 0 0;
+      padding: 22px;
+      animation: slideUp 0.2s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(100%);
+      }
+
+      to {
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .modal-header h2 {
+      font-size: 20px;
+    }
+
+    .close-button {
+      border: none;
+      background: #f0f1f5;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .attendance-options {
+      display: grid;
+      gap: 10px;
+    }
+
+    .attendance-option {
+      width: 100%;
+      border: 1px solid #e5e5e5;
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .attendance-option:hover {
+      background: #f8f8ff;
+    }
+
+    .option-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f1f2f6;
+      font-size: 20px;
+    }
+
+    .option-text strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 3px;
+    }
+
+    .option-text span {
+      color: #777;
+      font-size: 12px;
+    }
+
     /* MOBILE */
     @media (max-width: 700px) {
 
@@ -265,12 +400,16 @@
       }
 
       .day {
-        min-height: 58px;
+        min-height: 65px;
         padding: 6px;
       }
 
       .weekday {
         font-size: 10px;
+      }
+
+      .day-status {
+        font-size: 9px;
       }
     }
   </style>
@@ -278,315 +417,651 @@
 
 <body>
 
-  <div class="app">
+<div class="app">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
 
-      <div class="logo">
-        Employee Calendar
+    <div class="logo">
+      Employee Calendar
+    </div>
+
+    <div class="menu">
+
+      <button class="active" onclick="showPage('dashboard', this)">
+        🏠 Dashboard
+      </button>
+
+      <button onclick="showPage('calendar', this)">
+        📅 Calendar
+      </button>
+
+      <button onclick="showPage('notes', this)">
+        📝 Daily Notes
+      </button>
+
+      <button onclick="showPage('summary', this)">
+        📊 Work Summary
+      </button>
+
+      <button onclick="showPage('settings', this)">
+        ⚙️ Settings
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="topbar">
+
+      <button class="mobile-menu" onclick="toggleSidebar()">
+        ☰
+      </button>
+
+      <h1 id="pageTitle">Dashboard</h1>
+
+    </div>
+
+
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="page active">
+
+      <div class="welcome">
+
+        <h2>Welcome 👋</h2>
+
+        <p>
+          Mark your work after finishing for the day.
+          Tap a date in the calendar to record attendance.
+        </p>
+
       </div>
 
-      <div class="menu">
 
-        <button class="active" onclick="showPage('dashboard', this)">
-          🏠 Dashboard
-        </button>
+      <div class="cards">
 
-        <button onclick="showPage('calendar', this)">
-          📅 Calendar
-        </button>
+        <div class="card">
+          <div class="card-title">Full Days</div>
+          <div class="card-value" id="fullDays">0</div>
+        </div>
 
-        <button onclick="showPage('notes', this)">
-          📝 Daily Notes
-        </button>
+        <div class="card">
+          <div class="card-title">Half Days</div>
+          <div class="card-value" id="halfDays">0</div>
+        </div>
 
-        <button onclick="showPage('summary', this)">
-          📊 Work Summary
-        </button>
+        <div class="card">
+          <div class="card-title">1½ Days</div>
+          <div class="card-value" id="oneHalfDays">0</div>
+        </div>
 
-        <button onclick="showPage('settings', this)">
-          ⚙️ Settings
-        </button>
+        <div class="card">
+          <div class="card-title">Total Days</div>
+          <div class="card-value" id="totalDays">0</div>
+        </div>
 
       </div>
 
-    </aside>
+    </section>
 
 
-    <!-- MAIN -->
-    <main class="main">
+    <!-- CALENDAR -->
+    <section id="calendar" class="page">
 
-      <div class="topbar">
+      <div class="calendar-box">
 
-        <button class="mobile-menu" onclick="toggleSidebar()">
-          ☰
-        </button>
+        <div class="calendar-header">
 
-        <h1 id="pageTitle">Dashboard</h1>
+          <div class="month-title" id="monthTitle"></div>
+
+          <div class="month-buttons">
+            <button onclick="changeMonth(-1)">‹</button>
+            <button onclick="changeMonth(1)">›</button>
+          </div>
+
+        </div>
+
+
+        <div class="weekdays">
+
+          <div class="weekday">Sun</div>
+          <div class="weekday">Mon</div>
+          <div class="weekday">Tue</div>
+          <div class="weekday">Wed</div>
+          <div class="weekday">Thu</div>
+          <div class="weekday">Fri</div>
+          <div class="weekday">Sat</div>
+
+        </div>
+
+
+        <div class="days" id="calendarDays"></div>
 
       </div>
 
+    </section>
 
-      <!-- DASHBOARD -->
-      <section id="dashboard" class="page active">
 
-        <div class="welcome">
-          <h2>Welcome 👋</h2>
-          <p>
-            Mark your work for each day after finishing work.
-            You can record full days, half days and extra half days.
-          </p>
+    <!-- NOTES -->
+    <section id="notes" class="page">
+
+      <div class="empty-card">
+
+        <h2>📝 Daily Notes</h2>
+
+        <br>
+
+        <p>
+          Daily notes will be added in the next chunk.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- SUMMARY -->
+    <section id="summary" class="page">
+
+      <div class="empty-card">
+
+        <h2>📊 Work Summary</h2>
+
+        <br>
+
+        <p>
+          Your work summary will appear here.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- SETTINGS -->
+    <section id="settings" class="page">
+
+      <div class="empty-card">
+
+        <h2>⚙️ Settings</h2>
+
+        <br>
+
+        <p>
+          Settings will be added later.
+        </p>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<!-- ATTENDANCE MODAL -->
+
+<div class="modal-overlay" id="attendanceModal">
+
+  <div class="attendance-modal">
+
+    <div class="modal-header">
+
+      <h2 id="selectedDateTitle">
+        Mark Attendance
+      </h2>
+
+      <button
+        class="close-button"
+        onclick="closeAttendance()">
+        ×
+      </button>
+
+    </div>
+
+
+    <div class="attendance-options">
+
+      <button
+        class="attendance-option"
+        onclick="setAttendance('absent')">
+
+        <div class="option-icon">❌</div>
+
+        <div class="option-text">
+          <strong>Absent</strong>
+          <span>0 days</span>
         </div>
 
+      </button>
 
-        <div class="cards">
 
-          <div class="card">
-            <div class="card-title">Full Days</div>
-            <div class="card-value">0</div>
-          </div>
+      <button
+        class="attendance-option"
+        onclick="setAttendance('half')">
 
-          <div class="card">
-            <div class="card-title">Half Days</div>
-            <div class="card-value">0</div>
-          </div>
+        <div class="option-icon">½</div>
 
-          <div class="card">
-            <div class="card-title">1½ Days</div>
-            <div class="card-value">0</div>
-          </div>
-
-          <div class="card">
-            <div class="card-title">Total Days</div>
-            <div class="card-value">0</div>
-          </div>
-
+        <div class="option-text">
+          <strong>Half Day</strong>
+          <span>0.5 day</span>
         </div>
 
-      </section>
+      </button>
 
 
-      <!-- CALENDAR -->
-      <section id="calendar" class="page">
+      <button
+        class="attendance-option"
+        onclick="setAttendance('full')">
 
-        <div class="calendar-box">
+        <div class="option-icon">✓</div>
 
-          <div class="calendar-header">
-
-            <div class="month-title" id="monthTitle"></div>
-
-            <div class="month-buttons">
-              <button onclick="changeMonth(-1)">‹</button>
-              <button onclick="changeMonth(1)">›</button>
-            </div>
-
-          </div>
-
-
-          <div class="weekdays">
-            <div class="weekday">Sun</div>
-            <div class="weekday">Mon</div>
-            <div class="weekday">Tue</div>
-            <div class="weekday">Wed</div>
-            <div class="weekday">Thu</div>
-            <div class="weekday">Fri</div>
-            <div class="weekday">Sat</div>
-          </div>
-
-
-          <div class="days" id="calendarDays"></div>
-
+        <div class="option-text">
+          <strong>Full Day</strong>
+          <span>1 day</span>
         </div>
 
-      </section>
+      </button>
 
 
-      <!-- NOTES -->
-      <section id="notes" class="page">
+      <button
+        class="attendance-option"
+        onclick="setAttendance('onehalf')">
 
-        <div class="welcome">
-          <h2>📝 Daily Notes</h2>
-          <br>
-          <p>
-            Daily notes will be added in the next chunk.
-          </p>
+        <div class="option-icon">1½</div>
+
+        <div class="option-text">
+          <strong>Full + Half</strong>
+          <span>1.5 days</span>
         </div>
 
-      </section>
+      </button>
 
 
-      <!-- SUMMARY -->
-      <section id="summary" class="page">
+      <button
+        class="attendance-option"
+        onclick="setAttendance('two')">
 
-        <div class="welcome">
-          <h2>📊 Work Summary</h2>
-          <br>
-          <p>
-            Monthly work summary will be added later.
-          </p>
+        <div class="option-icon">2</div>
+
+        <div class="option-text">
+          <strong>2 Full Days</strong>
+          <span>2 days</span>
         </div>
 
-      </section>
+      </button>
 
-
-      <!-- SETTINGS -->
-      <section id="settings" class="page">
-
-        <div class="welcome">
-          <h2>⚙️ Settings</h2>
-          <br>
-          <p>
-            App settings will be added later.
-          </p>
-        </div>
-
-      </section>
-
-    </main>
+    </div>
 
   </div>
 
-
-  <script>
-
-    let currentDate = new Date();
+</div>
 
 
-    function toggleSidebar() {
+<script>
 
-      document
-        .getElementById("sidebar")
-        .classList.toggle("open");
+  let currentDate = new Date();
 
-    }
+  let selectedDate = null;
 
-
-    function showPage(pageId, button) {
-
-      document
-        .querySelectorAll(".page")
-        .forEach(page => {
-          page.classList.remove("active");
-        });
+  let attendance = {};
 
 
-      document
-        .getElementById(pageId)
-        .classList.add("active");
+  /* SIDEBAR */
+
+  function toggleSidebar() {
+
+    document
+      .getElementById("sidebar")
+      .classList.toggle("open");
+
+  }
 
 
-      document
-        .querySelectorAll(".menu button")
-        .forEach(btn => {
-          btn.classList.remove("active");
-        });
+  /* PAGE NAVIGATION */
+
+  function showPage(pageId, button) {
+
+    document
+      .querySelectorAll(".page")
+      .forEach(page => {
+        page.classList.remove("active");
+      });
 
 
-      button.classList.add("active");
+    document
+      .getElementById(pageId)
+      .classList.add("active");
 
 
-      document.getElementById("pageTitle").textContent =
-        button.textContent.trim();
+    document
+      .querySelectorAll(".menu button")
+      .forEach(btn => {
+        btn.classList.remove("active");
+      });
 
 
-      document
-        .getElementById("sidebar")
-        .classList.remove("open");
+    button.classList.add("active");
 
 
-      if (pageId === "calendar") {
-        renderCalendar();
-      }
-
-    }
+    document.getElementById("pageTitle").textContent =
+      button.textContent.trim();
 
 
-    function changeMonth(amount) {
+    document
+      .getElementById("sidebar")
+      .classList.remove("open");
 
-      currentDate.setMonth(
-        currentDate.getMonth() + amount
-      );
 
+    if (pageId === "calendar") {
       renderCalendar();
-
     }
 
-
-    function renderCalendar() {
-
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth();
+  }
 
 
-      const monthNames = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
-      ];
+  /* MONTH */
 
+  function changeMonth(amount) {
 
-      document.getElementById("monthTitle").textContent =
-        monthNames[month] + " " + year;
-
-
-      const firstDay =
-        new Date(year, month, 1).getDay();
-
-
-      const daysInMonth =
-        new Date(year, month + 1, 0).getDate();
-
-
-      const calendarDays =
-        document.getElementById("calendarDays");
-
-
-      calendarDays.innerHTML = "";
-
-
-      for (let i = 0; i < firstDay; i++) {
-
-        const emptyDay =
-          document.createElement("div");
-
-        calendarDays.appendChild(emptyDay);
-
-      }
-
-
-      for (let day = 1; day <= daysInMonth; day++) {
-
-        const dayBox =
-          document.createElement("div");
-
-        dayBox.className = "day";
-
-
-        dayBox.innerHTML = `
-          <div class="day-number">${day}</div>
-        `;
-
-
-        calendarDays.appendChild(dayBox);
-
-      }
-
-    }
-
+    currentDate.setMonth(
+      currentDate.getMonth() + amount
+    );
 
     renderCalendar();
 
-  </script>
+  }
+
+
+  /* CALENDAR */
+
+  function renderCalendar() {
+
+    const year = currentDate.getFullYear();
+
+    const month = currentDate.getMonth();
+
+
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ];
+
+
+    document.getElementById("monthTitle").textContent =
+      monthNames[month] + " " + year;
+
+
+    const firstDay =
+      new Date(year, month, 1).getDay();
+
+
+    const daysInMonth =
+      new Date(year, month + 1, 0).getDate();
+
+
+    const calendarDays =
+      document.getElementById("calendarDays");
+
+
+    calendarDays.innerHTML = "";
+
+
+    /* EMPTY DAYS BEFORE MONTH */
+
+    for (let i = 0; i < firstDay; i++) {
+
+      const emptyDay =
+        document.createElement("div");
+
+      calendarDays.appendChild(emptyDay);
+
+    }
+
+
+    /* DAYS */
+
+    for (let day = 1; day <= daysInMonth; day++) {
+
+      const dateKey =
+        year + "-" +
+        String(month + 1).padStart(2, "0") +
+        "-" +
+        String(day).padStart(2, "0");
+
+
+      const dayBox =
+        document.createElement("div");
+
+      dayBox.className = "day";
+
+
+      const status =
+        attendance[dateKey];
+
+
+      let statusText = "";
+
+      let statusClass = "";
+
+
+      if (status === "absent") {
+        statusText = "Absent";
+        statusClass = "status-absent";
+      }
+
+      if (status === "half") {
+        statusText = "½ Day";
+        statusClass = "status-half";
+      }
+
+      if (status === "full") {
+        statusText = "Full";
+        statusClass = "status-full";
+      }
+
+      if (status === "onehalf") {
+        statusText = "1½ Days";
+        statusClass = "status-onehalf";
+      }
+
+      if (status === "two") {
+        statusText = "2 Days";
+        statusClass = "status-two";
+      }
+
+
+      dayBox.innerHTML = `
+        <div class="day-number">${day}</div>
+        <div class="day-status ${statusClass}">
+          ${statusText}
+        </div>
+      `;
+
+
+      dayBox.onclick = function() {
+
+        openAttendance(dateKey);
+
+      };
+
+
+      calendarDays.appendChild(dayBox);
+
+    }
+
+
+    updateSummary();
+
+  }
+
+
+  /* OPEN ATTENDANCE */
+
+  function openAttendance(dateKey) {
+
+    selectedDate = dateKey;
+
+
+    const parts =
+      dateKey.split("-");
+
+
+    const dateObject =
+      new Date(
+        Number(parts[0]),
+        Number(parts[1]) - 1,
+        Number(parts[2])
+      );
+
+
+    const formattedDate =
+      dateObject.toLocaleDateString(
+        "en-IN",
+        {
+          day: "numeric",
+          month: "long",
+          year: "numeric"
+        }
+      );
+
+
+    document.getElementById(
+      "selectedDateTitle"
+    ).textContent = formattedDate;
+
+
+    document
+      .getElementById("attendanceModal")
+      .classList.add("show");
+
+  }
+
+
+  /* CLOSE ATTENDANCE */
+
+  function closeAttendance() {
+
+    document
+      .getElementById("attendanceModal")
+      .classList.remove("show");
+
+    selectedDate = null;
+
+  }
+
+
+  /* SET ATTENDANCE */
+
+  function setAttendance(status) {
+
+    if (!selectedDate) {
+      return;
+    }
+
+
+    attendance[selectedDate] = status;
+
+
+    closeAttendance();
+
+    renderCalendar();
+
+  }
+
+
+  /* SUMMARY */
+
+  function updateSummary() {
+
+    let full = 0;
+
+    let half = 0;
+
+    let oneHalf = 0;
+
+    let total = 0;
+
+
+    Object.values(attendance)
+      .forEach(status => {
+
+        if (status === "full") {
+          full++;
+          total += 1;
+        }
+
+        if (status === "half") {
+          half++;
+          total += 0.5;
+        }
+
+        if (status === "onehalf") {
+          oneHalf++;
+          total += 1.5;
+        }
+
+        if (status === "two") {
+          total += 2;
+        }
+
+      });
+
+
+    document.getElementById("fullDays")
+      .textContent = full;
+
+
+    document.getElementById("halfDays")
+      .textContent = half;
+
+
+    document.getElementById("oneHalfDays")
+      .textContent = oneHalf;
+
+
+    document.getElementById("totalDays")
+      .textContent =
+      total % 1 === 0
+        ? total
+        : total.toFixed(1);
+
+  }
+
+
+  /* CLOSE MODAL WHEN TAPPING OUTSIDE */
+
+  document
+    .getElementById("attendanceModal")
+    .addEventListener("click", function(event) {
+
+      if (event.target === this) {
+        closeAttendance();
+      }
+
+    });
+
+
+  /* START */
+
+  renderCalendar();
+
+</script>
 
 </body>
 </html>
