@@ -490,6 +490,329 @@ renderCalendar();
 
 }
 
+<script>
+
+/* =========================
+   CALENDAR
+========================= */
+
+function renderCalendar() {
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
+
+  document.getElementById("monthTitle").textContent =
+    monthNames[month] + " " + year;
+
+  const firstDay =
+    new Date(year, month, 1).getDay();
+
+  const daysInMonth =
+    new Date(year, month + 1, 0).getDate();
+
+  const calendarDays =
+    document.getElementById("calendarDays");
+
+  calendarDays.innerHTML = "";
+
+
+  for (let i = 0; i < firstDay; i++) {
+
+    calendarDays.appendChild(
+      document.createElement("div")
+    );
+
+  }
+
+
+  for (let day = 1; day <= daysInMonth; day++) {
+
+    const dateKey =
+      year + "-" +
+      String(month + 1).padStart(2, "0") + "-" +
+      String(day).padStart(2, "0");
+
+
+    const dayBox =
+      document.createElement("div");
+
+    dayBox.className = "day";
+
+
+    const today = new Date();
+
+    if (
+      day === today.getDate() &&
+      month === today.getMonth() &&
+      year === today.getFullYear()
+    ) {
+
+      dayBox.classList.add("today");
+
+    }
+
+
+    const status = attendance[dateKey];
+
+    let statusText = "";
+
+
+    if (status === "absent") {
+      statusText = "❌ Absent";
+    }
+
+    if (status === "half") {
+      statusText = "½ Day";
+    }
+
+    if (status === "full") {
+      statusText = "✓ Full";
+    }
+
+    if (status === "onehalf") {
+      statusText = "1½ Days";
+    }
+
+    if (status === "two") {
+      statusText = "2 Days";
+    }
+
+
+    let noteText = "";
+
+    if (notes[dateKey]) {
+      noteText = "📝 Note";
+    }
+
+
+    dayBox.innerHTML = `
+
+      <div>
+        ${day}
+      </div>
+
+      <div class="status">
+        ${statusText}
+      </div>
+
+      <div class="note">
+        ${noteText}
+      </div>
+
+    `;
+
+
+    dayBox.onclick = function() {
+
+      openDate(dateKey);
+
+    };
+
+
+    calendarDays.appendChild(dayBox);
+
+  }
+
+
+  updateSummary();
+
+}
+
+
+/* =========================
+   OPEN DATE
+========================= */
+
+function openDate(dateKey) {
+
+  selectedDate = dateKey;
+
+
+  let currentStatus =
+    attendance[dateKey] || "";
+
+
+  let note =
+    notes[dateKey] || "";
+
+
+  const choice = prompt(
+
+    "Date: " + dateKey +
+
+    "\n\n" +
+
+    "Choose attendance:" +
+
+    "\n1 = Absent" +
+    "\n2 = Half Day" +
+    "\n3 = Full Day" +
+    "\n4 = Full + Half" +
+    "\n5 = 2 Full Days" +
+
+    "\n\nCurrent: " +
+    (currentStatus || "Not marked")
+
+  );
+
+
+  if (choice === null) {
+    return;
+  }
+
+
+  if (choice === "1") {
+    attendance[dateKey] = "absent";
+  }
+
+  if (choice === "2") {
+    attendance[dateKey] = "half";
+  }
+
+  if (choice === "3") {
+    attendance[dateKey] = "full";
+  }
+
+  if (choice === "4") {
+    attendance[dateKey] = "onehalf";
+  }
+
+  if (choice === "5") {
+    attendance[dateKey] = "two";
+  }
+
+
+  if (
+    ["1","2","3","4","5"].includes(choice)
+  ) {
+
+    saveData();
+
+  }
+
+
+  const newNote = prompt(
+    "Daily Note:\n\n" +
+    "Write work, place, money, materials, etc.",
+    note
+  );
+
+
+  if (newNote !== null) {
+
+    if (newNote.trim() === "") {
+
+      delete notes[dateKey];
+
+    } else {
+
+      notes[dateKey] =
+        newNote.trim();
+
+    }
+
+
+    saveData();
+
+  }
+
+
+  renderCalendar();
+
+}
+
+
+/* =========================
+   SUMMARY
+========================= */
+
+function updateSummary() {
+
+  let full = 0;
+  let half = 0;
+  let oneHalf = 0;
+  let total = 0;
+
+
+  Object.values(attendance)
+    .forEach(status => {
+
+
+      if (status === "full") {
+
+        full++;
+        total += 1;
+
+      }
+
+
+      if (status === "half") {
+
+        half++;
+        total += 0.5;
+
+      }
+
+
+      if (status === "onehalf") {
+
+        oneHalf++;
+        total += 1.5;
+
+      }
+
+
+      if (status === "two") {
+
+        total += 2;
+
+      }
+
+    });
+
+
+  document.getElementById("fullDays")
+    .textContent = full;
+
+
+  document.getElementById("halfDays")
+    .textContent = half;
+
+
+  document.getElementById("oneHalfDays")
+    .textContent = oneHalf;
+
+
+  document.getElementById("totalDays")
+    .textContent =
+    total % 1 === 0
+      ? total
+      : total.toFixed(1);
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+renderCalendar();
+
 </script>
 
 </body>
