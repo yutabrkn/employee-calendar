@@ -24,6 +24,17 @@
 </head>
 <body>
 
+<div style="
+  background:#2563eb;
+  color:white;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:15px;
+  font-size:18px;
+  font-weight:bold;">
+  📅 Employee Calendar
+</div>
+  
   <h1>📅 Employee Calendar</h1>
 
   <div class="calendar">
@@ -93,11 +104,21 @@ button.innerText = day + (attendance[key] ? " " + attendance[key] : "");
     "5": "🟣"
   };
 
-  if (status[choice]) {
   let key = year + "-" + month + "-" + day;
-  attendance[key] = status[choice];
-  localStorage.setItem("attendance", JSON.stringify(attendance));
-  button.innerText = day + " " + status[choice];
+
+  if (status[choice]) {
+    attendance[key] = status[choice];
+    localStorage.setItem("attendance", JSON.stringify(attendance));
+    button.innerText = day + " " + status[choice];
+  }
+
+  let notes = JSON.parse(localStorage.getItem("dailyNotes") || "{}");
+  let note = prompt("Write a daily note (leave empty to skip):", notes[key] || "");
+
+  if (note !== null) {
+    notes[key] = note;
+    localStorage.setItem("dailyNotes", JSON.stringify(notes));
+    alert("Daily note saved!");
   }
 };
 
