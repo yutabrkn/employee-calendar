@@ -312,14 +312,15 @@ body {
     <p>Settings will be added here.</p>
   </section>
 
-  let currentDate = new Date();
+    <script>
+
+let currentDate = new Date();
 
 let attendance =
-  JSON.parse(localStorage.getItem("employeeAttendance")) || {};
+JSON.parse(localStorage.getItem("employeeAttendance")) || {};
 
 let notes =
-  JSON.parse(localStorage.getItem("employeeNotes")) || {};
-
+JSON.parse(localStorage.getItem("employeeNotes")) || {};
 
 function saveData() {
   localStorage.setItem(
@@ -333,76 +334,47 @@ function saveData() {
   );
 }
 
-
 function toggleSidebar() {
-  document
-    .getElementById("sidebar")
-    .classList.toggle("open");
+  document.getElementById("sidebar").classList.toggle("open");
 }
-
 
 function showPage(pageId, button) {
 
-  document
-    .querySelectorAll(".page")
-    .forEach(page => {
-      page.classList.remove("active");
-    });
+  document.querySelectorAll(".page").forEach(function(page) {
+    page.classList.remove("active");
+  });
 
-  document
-    .getElementById(pageId)
-    .classList.add("active");
+  document.getElementById(pageId).classList.add("active");
 
-  document
-    .querySelectorAll(".menu button")
-    .forEach(btn => {
-      btn.classList.remove("active");
-    });
+  document.querySelectorAll(".menu button").forEach(function(btn) {
+    btn.classList.remove("active");
+  });
 
   button.classList.add("active");
 
   document.getElementById("pageTitle").textContent =
     button.textContent.trim();
-
-  document
-    .getElementById("sidebar")
-    .classList.remove("open");
 }
-
 
 function changeMonth(amount) {
-
-  currentDate.setMonth(
-    currentDate.getMonth() + amount
-  );
-
+  currentDate.setMonth(currentDate.getMonth() + amount);
   renderCalendar();
 }
-  function renderCalendar() {
+
+function renderCalendar() {
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
   const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
+    "January","February","March","April","May","June",
+    "July","August","September","October","November","December"
   ];
 
   document.getElementById("monthTitle").textContent =
     months[month] + " " + year;
 
-  const firstDay =
-    new Date(year, month, 1).getDay();
+  const firstDay = new Date(year, month, 1).getDay();
 
   const daysInMonth =
     new Date(year, month + 1, 0).getDate();
@@ -413,10 +385,7 @@ function changeMonth(amount) {
   container.innerHTML = "";
 
   for (let i = 0; i < firstDay; i++) {
-
-    const empty = document.createElement("div");
-
-    container.appendChild(empty);
+    container.appendChild(document.createElement("div"));
   }
 
   for (let day = 1; day <= daysInMonth; day++) {
@@ -440,35 +409,21 @@ function changeMonth(amount) {
       box.classList.add("today");
     }
 
+    let status = attendance[dateKey] || "";
+
     let statusText = "";
 
-    if (attendance[dateKey] === "absent")
-      statusText = "❌ Absent";
-
-    if (attendance[dateKey] === "half")
-      statusText = "½ Day";
-
-    if (attendance[dateKey] === "full")
-      statusText = "✓ Full";
-
-    if (attendance[dateKey] === "onehalf")
-      statusText = "1½ Days";
-
-    if (attendance[dateKey] === "two")
-      statusText = "2 Days";
-
-    let noteText = "";
-
-    if (notes[dateKey])
-      noteText = "📝 Note";
+    if (status === "absent") statusText = "❌ Absent";
+    if (status === "half") statusText = "½ Day";
+    if (status === "full") statusText = "✓ Full";
+    if (status === "onehalf") statusText = "1½ Days";
+    if (status === "two") statusText = "2 Days";
 
     box.innerHTML =
       "<div>" + day + "</div>" +
-      "<div class='status'>" +
-      statusText +
-      "</div>" +
+      "<div class='status'>" + statusText + "</div>" +
       "<div class='note'>" +
-      noteText +
+      (notes[dateKey] ? "📝 Note" : "") +
       "</div>";
 
     box.onclick = function() {
@@ -480,10 +435,8 @@ function changeMonth(amount) {
 
   updateSummary();
 }
-    function openDate(dateKey) {
 
-  let current =
-    attendance[dateKey] || "";
+function openDate(dateKey) {
 
   let choice = prompt(
     "Date: " + dateKey +
@@ -492,53 +445,30 @@ function changeMonth(amount) {
     "\n2 = Half Day" +
     "\n3 = Full Day" +
     "\n4 = Full + Half" +
-    "\n5 = 2 Full Days" +
-    "\n\nCurrent: " +
-    (current || "Not marked")
+    "\n5 = 2 Full Days"
   );
 
-  if (choice === null) return;
+  if (choice === "1") attendance[dateKey] = "absent";
+  if (choice === "2") attendance[dateKey] = "half";
+  if (choice === "3") attendance[dateKey] = "full";
+  if (choice === "4") attendance[dateKey] = "onehalf";
+  if (choice === "5") attendance[dateKey] = "two";
 
-  if (choice === "1")
-    attendance[dateKey] = "absent";
-
-  if (choice === "2")
-    attendance[dateKey] = "half";
-
-  if (choice === "3")
-    attendance[dateKey] = "full";
-
-  if (choice === "4")
-    attendance[dateKey] = "onehalf";
-
-  if (choice === "5")
-    attendance[dateKey] = "two";
-
-  if (
-    ["1", "2", "3", "4", "5"].includes(choice)
-  ) {
+  if (["1","2","3","4","5"].includes(choice)) {
     saveData();
   }
 
-  let oldNote =
-    notes[dateKey] || "";
-
-  let newNote = prompt(
-    "Daily Note:\n\n" +
-    "Write work, place, money, materials, etc.",
-    oldNote
+  let note = prompt(
+    "Daily Note:",
+    notes[dateKey] || ""
   );
 
-  if (newNote !== null) {
+  if (note !== null) {
 
-    if (newNote.trim() === "") {
-
+    if (note.trim() === "") {
       delete notes[dateKey];
-
     } else {
-
-      notes[dateKey] =
-        newNote.trim();
+      notes[dateKey] = note.trim();
     }
 
     saveData();
@@ -546,14 +476,15 @@ function changeMonth(amount) {
 
   renderCalendar();
 }
-    function updateSummary() {
+
+function updateSummary() {
 
   let full = 0;
   let half = 0;
   let oneHalf = 0;
   let total = 0;
 
-  Object.values(attendance).forEach(status => {
+  Object.values(attendance).forEach(function(status) {
 
     if (status === "full") {
       full++;
@@ -577,21 +508,16 @@ function changeMonth(amount) {
   });
 
   document.getElementById("fullDays").textContent = full;
-
   document.getElementById("halfDays").textContent = half;
-
   document.getElementById("oneHalfDays").textContent = oneHalf;
 
   document.getElementById("totalDays").textContent =
-    total % 1 === 0
-      ? total
-      : total.toFixed(1);
+    total % 1 === 0 ? total : total.toFixed(1);
 }
-
 
 renderCalendar();
 
-</script>
+      </script>
 
 </body>
   </html>
