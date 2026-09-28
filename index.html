@@ -327,13 +327,16 @@ body {
 
     <script>
 
-let currentDate = new Date();
+     let currentDate = new Date();
 
 let attendance =
-JSON.parse(localStorage.getItem("employeeAttendance")) || {};
+  JSON.parse(localStorage.getItem("employeeAttendance")) || {};
 
 let notes =
-JSON.parse(localStorage.getItem("employeeNotes")) || {};
+  JSON.parse(localStorage.getItem("employeeNotes")) || {};
+
+let selectedDate = "";
+
 
 function saveData() {
   localStorage.setItem(
@@ -347,9 +350,11 @@ function saveData() {
   );
 }
 
+
 function toggleSidebar() {
   document.getElementById("sidebar").classList.toggle("open");
 }
+
 
 function showPage(pageId, button) {
 
@@ -367,12 +372,18 @@ function showPage(pageId, button) {
 
   document.getElementById("pageTitle").textContent =
     button.textContent.trim();
+
+  if (pageId === "calendar") {
+    renderCalendar();
+  }
 }
+
 
 function changeMonth(amount) {
   currentDate.setMonth(currentDate.getMonth() + amount);
   renderCalendar();
 }
+
 
 function renderCalendar() {
 
@@ -387,7 +398,8 @@ function renderCalendar() {
   document.getElementById("monthTitle").textContent =
     months[month] + " " + year;
 
-  const firstDay = new Date(year, month, 1).getDay();
+  const firstDay =
+    new Date(year, month, 1).getDay();
 
   const daysInMonth =
     new Date(year, month + 1, 0).getDate();
@@ -398,7 +410,9 @@ function renderCalendar() {
   container.innerHTML = "";
 
   for (let i = 0; i < firstDay; i++) {
-    container.appendChild(document.createElement("div"));
+    container.appendChild(
+      document.createElement("div")
+    );
   }
 
   for (let day = 1; day <= daysInMonth; day++) {
@@ -408,7 +422,8 @@ function renderCalendar() {
       String(month + 1).padStart(2, "0") + "-" +
       String(day).padStart(2, "0");
 
-    const box = document.createElement("div");
+    const box =
+      document.createElement("div");
 
     box.className = "day";
 
@@ -422,25 +437,35 @@ function renderCalendar() {
       box.classList.add("today");
     }
 
-    let status = attendance[dateKey] || "";
-
     let statusText = "";
 
-    if (status === "absent") statusText = "❌ Absent";
-    if (status === "half") statusText = "½ Day";
-    if (status === "full") statusText = "✓ Full";
-    if (status === "onehalf") statusText = "1½ Days";
-    if (status === "two") statusText = "2 Days";
+    if (attendance[dateKey] === "absent")
+      statusText = "❌ Absent";
+
+    if (attendance[dateKey] === "half")
+      statusText = "½ Day";
+
+    if (attendance[dateKey] === "full")
+      statusText = "✓ Full";
+
+    if (attendance[dateKey] === "onehalf")
+      statusText = "1½ Days";
+
+    if (attendance[dateKey] === "two")
+      statusText = "2 Days";
+
+    let noteText = "";
+
+    if (notes[dateKey])
+      noteText = "📝 Note";
 
     box.innerHTML =
       "<div>" + day + "</div>" +
       "<div class='status'>" + statusText + "</div>" +
-      "<div class='note'>" +
-      (notes[dateKey] ? "📝 Note" : "") +
-      "</div>";
+      "<div class='note'>" + noteText + "</div>";
 
     box.onclick = function() {
-      openpopup(dateKey);
+      openPopup(dateKey);
     };
 
     container.appendChild(box);
@@ -449,46 +474,57 @@ function renderCalendar() {
   updateSummary();
 }
 
-function openDate(dateKey) {
 
-  let choice = prompt(
-    "Date: " + dateKey +
-    "\n\n" +
-    "1 = Absent" +
-    "\n2 = Half Day" +
-    "\n3 = Full Day" +
-    "\n4 = Full + Half" +
-    "\n5 = 2 Full Days"
-  );
+function openPopup(dateKey) {
 
-  if (choice === "1") attendance[dateKey] = "absent";
-  if (choice === "2") attendance[dateKey] = "half";
-  if (choice === "3") attendance[dateKey] = "full";
-  if (choice === "4") attendance[dateKey] = "onehalf";
-  if (choice === "5") attendance[dateKey] = "two";
+  selectedDate = dateKey;
 
-  if (["1","2","3","4","5"].includes(choice)) {
-    saveData();
-  }
+  document.getElementById("popupDate").textContent =
+    "📅 " + dateKey;
 
-  let note = prompt(
-    "Daily Note:",
-    notes[dateKey] || ""
-  );
+  document.getElementById("dailyNote").value =
+    notes[dateKey] || "";
 
-  if (note !== null) {
+  document.getElementById("attendancePopup").style.display =
+    "flex";
+}
 
-    if (note.trim() === "") {
-      delete notes[dateKey];
-    } else {
-      notes[dateKey] = note.trim();
-    }
 
-    saveData();
-  }
+function setAttendance(status) {
+
+  attendance[selectedDate] = status;
+
+  saveData();
 
   renderCalendar();
 }
+
+
+function savePopup() {
+
+  const note =
+    document.getElementById("dailyNote").value.trim();
+
+  if (note === "") {
+    delete notes[selectedDate];
+  } else {
+    notes[selectedDate] = note;
+  }
+
+  saveData();
+
+  closePopup();
+
+  renderCalendar();
+}
+
+
+function closePopup() {
+
+  document.getElementById("attendancePopup").style.display =
+    "none";
+}
+
 
 function updateSummary() {
 
@@ -521,160 +557,17 @@ function updateSummary() {
   });
 
   document.getElementById("fullDays").textContent = full;
+
   document.getElementById("halfDays").textContent = half;
+
   document.getElementById("oneHalfDays").textContent = oneHalf;
 
   document.getElementById("totalDays").textContent =
     total % 1 === 0 ? total : total.toFixed(1);
 }
 
-renderCalendar();
-<div id="attendancePopup" style="
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.45);
-z-index:100;
-align-items:flex-end;
-justify-content:center;
-">
 
-  <div style="
-  background:white;
-  width:100%;
-  max-width:500px;
-  border-radius:22px 22px 0 0;
-  padding:22px;
-  box-shadow:0 -5px 25px rgba(0,0,0,0.2);
-  ">
-
-    <h3 id="popupDate">Attendance</h3>
-
-    <button onclick="setAttendance('absent')">
-      ❌ Absent
-    </button>
-
-    <button onclick="setAttendance('half')">
-      ½ Half Day
-    </button>
-
-    <button onclick="setAttendance('full')">
-      ✓ Full Day
-    </button>
-
-    <button onclick="setAttendance('onehalf')">
-      1½ Full + Half
-    </button>
-
-    <button onclick="setAttendance('two')">
-      2 Full Days
-    </button>
-
-    <textarea
-      id="dailyNote"
-      placeholder="Daily note — work, place, money, materials..."
-      style="
-      width:100%;
-      min-height:100px;
-      margin-top:15px;
-      padding:12px;
-      border:1px solid #ddd;
-      border-radius:12px;
-      font-family:inherit;
-      resize:vertical;
-      "
-    ></textarea>
-
-    <button onclick="savePopup()" style="
-    width:100%;
-    margin-top:12px;
-    padding:14px;
-    border:0;
-    border-radius:12px;
-    background:#222;
-    color:white;
-    font-size:16px;
-    ">
-      Save
-    </button>
-
-    <button onclick="closePopup()" style="
-    width:100%;
-    margin-top:8px;
-    padding:12px;
-    border:0;
-    background:#eee;
-    border-radius:12px;
-    ">
-      Cancel
-    </button>
-
-  </div>
-</div>
-      let popupDateKey = "";
-let popupAttendance = "";
-
-
-function openPopup(dateKey) {
-
-  popupDateKey = dateKey;
-
-  popupAttendance =
-    attendance[dateKey] || "";
-
-  document.getElementById("popupDate").textContent =
-    "📅 " + dateKey;
-
-  document.getElementById("dailyNote").value =
-    notes[dateKey] || "";
-
-  document.getElementById("attendancePopup").style.display =
-    "flex";
-}
-
-
-function setAttendance(status) {
-
-  popupAttendance = status;
-
-  document.querySelectorAll(
-    "#attendancePopup button"
-  ).forEach(function(button) {
-    button.style.opacity = "1";
-  });
-}
-
-
-function savePopup() {
-
-  if (popupAttendance !== "") {
-    attendance[popupDateKey] =
-      popupAttendance;
-  }
-
-  const note =
-    document.getElementById("dailyNote").value.trim();
-
-  if (note === "") {
-    delete notes[popupDateKey];
-  } else {
-    notes[popupDateKey] = note;
-  }
-
-  saveData();
-
-  closePopup();
-
-  renderCalendar();
-}
-
-
-function closePopup() {
-
-  document.getElementById(
-    "attendancePopup"
-  ).style.display = "none";
-}
+renderCalendar(); 
       </script>
 
 </body>
