@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 
 <meta name="viewport"
@@ -12,38 +14,181 @@ content="width=device-width, initial-scale=1.0">
 
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  margin: 0;
   font-family: Arial, sans-serif;
   background: #f5f6fa;
   color: #222;
 }
 
-header {
-  background: #4b4ded;
-  color: white;
-  padding: 18px;
-  text-align: center;
+.sidebar {
+  width: 230px;
+  height: 100vh;
+  background: white;
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding: 20px 12px;
+  border-right: 1px solid #ddd;
 }
 
-.container {
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.menu button {
+  width: 100%;
+  display: block;
+  border: none;
+  background: none;
+  text-align: left;
+  padding: 14px;
+  margin-bottom: 5px;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+.menu button.active {
+  background: #eeeeff;
+  color: #4b4ded;
+  font-weight: bold;
+}
+
+.main {
+  margin-left: 230px;
   padding: 20px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.mobile-menu {
+  display: none;
+}
+
+.page {
+  display: none;
+}
+
+.page.active {
+  display: block;
 }
 
 .card {
   background: white;
+  border-radius: 16px;
   padding: 20px;
-  border-radius: 15px;
   margin-bottom: 15px;
 }
 
-button {
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.card-value {
+  font-size: 25px;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+.calendar {
+  background: white;
+  padding: 15px;
+  border-radius: 16px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.calendar-header button {
   border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 18px;
+}
+
+.weekdays,
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.weekday {
+  text-align: center;
+  font-size: 12px;
+  color: #777;
+  padding: 8px 0;
+}
+
+.day {
+  min-height: 65px;
+  border: 1px solid #eee;
   border-radius: 10px;
-  padding: 12px 16px;
+  padding: 7px;
   cursor: pointer;
+}
+
+.day.today {
+  border: 2px solid #4b4ded;
+}
+
+.status {
+  font-size: 10px;
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+.note {
+  font-size: 9px;
+  margin-top: 4px;
+  color: #777;
+}
+
+@media (max-width: 700px) {
+
+  .sidebar {
+    transform: translateX(-100%);
+    transition: 0.2s;
+    z-index: 10;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .main {
+    margin-left: 0;
+    padding: 14px;
+  }
+
+  .mobile-menu {
+    display: block;
+    border: none;
+    background: white;
+    font-size: 22px;
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
 }
 
 </style>
@@ -52,48 +197,296 @@ button {
 
 <body>
 
-<header>
-  <h2>Employee Calendar</h2>
-</header>
+<aside class="sidebar" id="sidebar">
 
-<div class="container">
+<div class="logo">
+Employee Calendar
+</div>
 
-  <div class="card">
+<div class="menu">
 
-    <h3>📅 Calendar</h3>
+<button class="active"
+onclick="showPage('dashboard', this)">
+🏠 Dashboard
+</button>
 
-    <p>
-      Your employee calendar will appear here.
-    </p>
+<button
+onclick="showPage('calendar', this)">
+📅 Calendar
+</button>
 
-  </div>
+<button
+onclick="showPage('notes', this)">
+📝 Daily Notes
+</button>
+
+<button
+onclick="showPage('summary', this)">
+📊 Work Summary
+</button>
+
+<button
+onclick="showPage('settings', this)">
+⚙️ Settings
+</button>
 
 </div>
 
+</aside>
+
+
+<main class="main">
+
+<div class="topbar">
+
+<button class="mobile-menu"
+onclick="toggleSidebar()">
+☰
+</button>
+
+<h2 id="pageTitle">
+Dashboard
+</h2>
+
+</div>
+
+
+<section id="dashboard"
+class="page active">
+
+<div class="card">
+
+<h2>Welcome 👋</h2>
+
+<br>
+
+<p>
+Mark your work after finishing
+for the day.
+</p>
+
+</div>
+
+
+<div class="cards">
+
+<div class="card">
+Full Days
+<div class="card-value"
+id="fullDays">0</div>
+</div>
+
+<div class="card">
+Half Days
+<div class="card-value"
+id="halfDays">0</div>
+</div>
+
+<div class="card">
+1½ Days
+<div class="card-value"
+id="oneHalfDays">0</div>
+</div>
+
+<div class="card">
+Total Days
+<div class="card-value"
+id="totalDays">0</div>
+</div>
+
+</div>
+
+</section>
+
+
+<section id="calendar"
+class="page">
+
+<div class="calendar">
+
+<div class="calendar-header">
+
+<button onclick="changeMonth(-1)">
+‹
+</button>
+
+<h3 id="monthTitle"></h3>
+
+<button onclick="changeMonth(1)">
+›
+</button>
+
+</div>
+
+
+<div class="weekdays">
+
+<div class="weekday">Sun</div>
+<div class="weekday">Mon</div>
+<div class="weekday">Tue</div>
+<div class="weekday">Wed</div>
+<div class="weekday">Thu</div>
+<div class="weekday">Fri</div>
+<div class="weekday">Sat</div>
+
+</div>
+
+
+<div class="days"
+id="calendarDays">
+</div>
+
+</div>
+
+</section>
+
+
+<section id="notes"
+class="page">
+
+<div class="card">
+
+<h2>📝 Daily Notes</h2>
+
+<br>
+
+<p>
+Tap a date from Calendar to
+write your daily note.
+</p>
+
+</div>
+
+</section>
+
+
+<section id="summary"
+class="page">
+
+<div class="card">
+
+<h2>📊 Work Summary</h2>
+
+<br>
+
+<p>
+Your work summary will appear here.
+</p>
+
+</div>
+
+</section>
+
+
+<section id="settings"
+class="page">
+
+<div class="card">
+
+<h2>⚙️ Settings</h2>
+
+<br>
+
+<p>
+Settings will be added soon.
+</p>
+
+</div>
+
+</section>
+
+</main>
+
+
 <script>
 
+let currentDate = new Date();
+
+let selectedDate = null;
+
+
 let attendance =
-  JSON.parse(
-    localStorage.getItem("employeeAttendance")
-  ) || {};
+JSON.parse(
+localStorage.getItem("employeeAttendance")
+) || {};
+
 
 let notes =
-  JSON.parse(
-    localStorage.getItem("employeeNotes")
-  ) || {};
+JSON.parse(
+localStorage.getItem("employeeNotes")
+) || {};
 
 
 function saveData() {
 
-  localStorage.setItem(
-    "employeeAttendance",
-    JSON.stringify(attendance)
-  );
+localStorage.setItem(
+"employeeAttendance",
+JSON.stringify(attendance)
+);
 
-  localStorage.setItem(
-    "employeeNotes",
-    JSON.stringify(notes)
-  );
+localStorage.setItem(
+"employeeNotes",
+JSON.stringify(notes)
+);
+
+}
+
+
+function toggleSidebar() {
+
+document
+.getElementById("sidebar")
+.classList.toggle("open");
+
+}
+
+
+function showPage(pageId, button) {
+
+document
+.querySelectorAll(".page")
+.forEach(page =>
+page.classList.remove("active")
+);
+
+document
+.getElementById(pageId)
+.classList.add("active");
+
+
+document
+.querySelectorAll(".menu button")
+.forEach(btn =>
+btn.classList.remove("active")
+);
+
+button.classList.add("active");
+
+
+document.getElementById("pageTitle")
+.textContent =
+button.textContent.trim();
+
+
+document
+.getElementById("sidebar")
+.classList.remove("open");
+
+
+if (pageId === "calendar") {
+renderCalendar();
+}
+
+}
+
+
+function changeMonth(amount) {
+
+currentDate.setMonth(
+currentDate.getMonth() + amount
+);
+
+renderCalendar();
 
 }
 
