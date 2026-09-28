@@ -1,63 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Employee Calendar</title>
 
 <style>
-
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 body {
+  margin: 0;
   font-family: Arial, sans-serif;
-  background: #f5f6fa;
+  background: #f5f5f7;
   color: #222;
 }
 
 .sidebar {
-  width: 230px;
-  height: 100vh;
-  background: white;
   position: fixed;
   left: 0;
   top: 0;
-  padding: 20px 12px;
+  width: 230px;
+  height: 100vh;
+  background: white;
+  padding: 20px;
   border-right: 1px solid #ddd;
 }
 
 .logo {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: bold;
-  padding: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .menu button {
   width: 100%;
-  display: block;
-  border: none;
-  background: none;
+  padding: 13px;
+  margin-bottom: 8px;
+  border: 0;
+  background: transparent;
   text-align: left;
-  padding: 14px;
-  margin-bottom: 5px;
   border-radius: 10px;
   font-size: 15px;
 }
 
 .menu button.active {
-  background: #eeeeff;
-  color: #4b4ded;
-  font-weight: bold;
+  background: #eee8ff;
+}
+
+.footer {
+  position: absolute;
+  bottom: 20px;
+  font-size: 12px;
+  color: #777;
 }
 
 .main {
@@ -68,12 +63,15 @@ body {
 .topbar {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 15px;
   margin-bottom: 20px;
 }
 
 .mobile-menu {
   display: none;
+  font-size: 25px;
+  border: 0;
+  background: none;
 }
 
 .page {
@@ -84,43 +82,41 @@ body {
   display: block;
 }
 
-.card {
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 15px;
-}
-
 .cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
 }
 
-.card-value {
+.card {
+  background: white;
+  padding: 18px;
+  border-radius: 15px;
+}
+
+.card b {
+  display: block;
   font-size: 25px;
-  font-weight: bold;
   margin-top: 8px;
 }
 
 .calendar {
   background: white;
   padding: 15px;
-  border-radius: 16px;
+  border-radius: 15px;
 }
 
 .calendar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
 }
 
 .calendar-header button {
-  border: none;
-  padding: 8px 14px;
+  border: 0;
+  background: #eee8ff;
+  padding: 8px 12px;
   border-radius: 8px;
-  font-size: 18px;
 }
 
 .weekdays,
@@ -133,35 +129,34 @@ body {
 .weekday {
   text-align: center;
   font-size: 12px;
-  color: #777;
   padding: 8px 0;
+  color: #777;
 }
 
 .day {
-  min-height: 65px;
-  border: 1px solid #eee;
-  border-radius: 10px;
+  min-height: 70px;
+  background: #f7f7f7;
+  border-radius: 8px;
   padding: 7px;
+  font-size: 13px;
   cursor: pointer;
 }
 
 .day.today {
-  border: 2px solid #4b4ded;
+  border: 2px solid #8b5cf6;
 }
 
 .status {
   font-size: 10px;
-  margin-top: 8px;
-  font-weight: bold;
+  margin-top: 5px;
 }
 
 .note {
-  font-size: 9px;
-  margin-top: 4px;
-  color: #777;
+  font-size: 10px;
+  margin-top: 3px;
 }
 
-@media (max-width: 700px) {
+@media(max-width:700px) {
 
   .sidebar {
     transform: translateX(-100%);
@@ -175,333 +170,220 @@ body {
 
   .main {
     margin-left: 0;
-    padding: 14px;
+    padding: 15px;
   }
 
   .mobile-menu {
     display: block;
-    border: none;
-    background: white;
-    font-size: 22px;
   }
 
   .cards {
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .day {
+    min-height: 60px;
+    font-size: 11px;
+  }
 }
-
 </style>
-
 </head>
 
 <body>
 
 <aside class="sidebar" id="sidebar">
 
-<div class="logo">
-Employee Calendar
-</div>
+  <div class="logo">Employee Calendar</div>
 
-<div class="menu">
+  <div class="menu">
 
-<button class="active"
-onclick="showPage('dashboard', this)">
-🏠 Dashboard
-</button>
+    <button class="active"
+      onclick="showPage('dashboard', this)">
+      🏠 Dashboard
+    </button>
 
-<button
-onclick="showPage('calendar', this)">
-📅 Calendar
-</button>
+    <button onclick="showPage('calendar', this)">
+      📅 Calendar
+    </button>
 
-<button
-onclick="showPage('notes', this)">
-📝 Daily Notes
-</button>
+    <button onclick="showPage('notes', this)">
+      📝 Daily Notes
+    </button>
 
-<button
-onclick="showPage('summary', this)">
-📊 Work Summary
-</button>
+    <button onclick="showPage('summary', this)">
+      📊 Work Summary
+    </button>
 
-<button
-onclick="showPage('settings', this)">
-⚙️ Settings
-</button>
+    <button onclick="showPage('settings', this)">
+      ⚙️ Settings
+    </button>
 
-</div>
+  </div>
+
+  <div class="footer">
+    App created by Avinash
+  </div>
 
 </aside>
 
-
 <main class="main">
 
-<div class="topbar">
+  <div class="topbar">
+    <button class="mobile-menu"
+      onclick="toggleSidebar()">☰</button>
 
-<button class="mobile-menu"
-onclick="toggleSidebar()">
-☰
-</button>
+    <h2 id="pageTitle">Dashboard</h2>
+  </div>
 
-<h2 id="pageTitle">
-Dashboard
-</h2>
+  <section id="dashboard" class="page active">
 
-</div>
+    <div class="cards">
 
+      <div class="card">
+        Full Days
+        <b id="fullDays">0</b>
+      </div>
 
-<section id="dashboard"
-class="page active">
+      <div class="card">
+        Half Days
+        <b id="halfDays">0</b>
+      </div>
 
-<div class="card">
+      <div class="card">
+        Full + Half
+        <b id="oneHalfDays">0</b>
+      </div>
 
-<h2>Welcome 👋</h2>
+      <div class="card">
+        Total Days
+        <b id="totalDays">0</b>
+      </div>
 
-<br>
+    </div>
 
-<p>
-Mark your work after finishing
-for the day.
-</p>
+  </section>
 
-</div>
+  <section id="calendar" class="page">
 
+    <div class="calendar">
 
-<div class="cards">
+      <div class="calendar-header">
 
-<div class="card">
-Full Days
-<div class="card-value"
-id="fullDays">0</div>
-</div>
+        <button onclick="changeMonth(-1)">
+          ◀
+        </button>
 
-<div class="card">
-Half Days
-<div class="card-value"
-id="halfDays">0</div>
-</div>
+        <h3 id="monthTitle"></h3>
 
-<div class="card">
-1½ Days
-<div class="card-value"
-id="oneHalfDays">0</div>
-</div>
+        <button onclick="changeMonth(1)">
+          ▶
+        </button>
 
-<div class="card">
-Total Days
-<div class="card-value"
-id="totalDays">0</div>
-</div>
+      </div>
 
-</div>
+      <div class="weekdays">
+        <div class="weekday">Sun</div>
+        <div class="weekday">Mon</div>
+        <div class="weekday">Tue</div>
+        <div class="weekday">Wed</div>
+        <div class="weekday">Thu</div>
+        <div class="weekday">Fri</div>
+        <div class="weekday">Sat</div>
+      </div>
 
-</section>
+      <div class="days" id="calendarDays"></div>
 
+    </div>
 
-<section id="calendar"
-class="page">
+  </section>
 
-<div class="calendar">
+  <section id="notes" class="page">
+    <h3>📝 Daily Notes</h3>
+    <p>Tap a calendar date to add or edit a note.</p>
+  </section>
 
-<div class="calendar-header">
+  <section id="summary" class="page">
+    <h3>📊 Work Summary</h3>
+    <p>Your total work days are shown on the Dashboard.</p>
+  </section>
 
-<button onclick="changeMonth(-1)">
-‹
-</button>
+  <section id="settings" class="page">
+    <h3>⚙️ Settings</h3>
+    <p>Settings will be added here.</p>
+  </section>
 
-<h3 id="monthTitle"></h3>
-
-<button onclick="changeMonth(1)">
-›
-</button>
-
-</div>
-
-
-<div class="weekdays">
-
-<div class="weekday">Sun</div>
-<div class="weekday">Mon</div>
-<div class="weekday">Tue</div>
-<div class="weekday">Wed</div>
-<div class="weekday">Thu</div>
-<div class="weekday">Fri</div>
-<div class="weekday">Sat</div>
-
-</div>
-
-
-<div class="days"
-id="calendarDays">
-</div>
-
-</div>
-
-</section>
-
-
-<section id="notes"
-class="page">
-
-<div class="card">
-
-<h2>📝 Daily Notes</h2>
-
-<br>
-
-<p>
-Tap a date from Calendar to
-write your daily note.
-</p>
-
-</div>
-
-</section>
-
-
-<section id="summary"
-class="page">
-
-<div class="card">
-
-<h2>📊 Work Summary</h2>
-
-<br>
-
-<p>
-Your work summary will appear here.
-</p>
-
-</div>
-
-</section>
-
-
-<section id="settings"
-class="page">
-
-<div class="card">
-
-<h2>⚙️ Settings</h2>
-
-<br>
-
-<p>
-Settings will be added soon.
-</p>
-
-</div>
-
-</section>
-
-</main>
-
-
-<script>
-
-let currentDate = new Date();
-
-let selectedDate = null;
-
+  let currentDate = new Date();
 
 let attendance =
-JSON.parse(
-localStorage.getItem("employeeAttendance")
-) || {};
-
+  JSON.parse(localStorage.getItem("employeeAttendance")) || {};
 
 let notes =
-JSON.parse(
-localStorage.getItem("employeeNotes")
-) || {};
+  JSON.parse(localStorage.getItem("employeeNotes")) || {};
 
 
 function saveData() {
+  localStorage.setItem(
+    "employeeAttendance",
+    JSON.stringify(attendance)
+  );
 
-localStorage.setItem(
-"employeeAttendance",
-JSON.stringify(attendance)
-);
-
-localStorage.setItem(
-"employeeNotes",
-JSON.stringify(notes)
-);
-
+  localStorage.setItem(
+    "employeeNotes",
+    JSON.stringify(notes)
+  );
 }
 
 
 function toggleSidebar() {
-
-document
-.getElementById("sidebar")
-.classList.toggle("open");
-
+  document
+    .getElementById("sidebar")
+    .classList.toggle("open");
 }
 
 
 function showPage(pageId, button) {
 
-document
-.querySelectorAll(".page")
-.forEach(page =>
-page.classList.remove("active")
-);
+  document
+    .querySelectorAll(".page")
+    .forEach(page => {
+      page.classList.remove("active");
+    });
 
-document
-.getElementById(pageId)
-.classList.add("active");
+  document
+    .getElementById(pageId)
+    .classList.add("active");
 
+  document
+    .querySelectorAll(".menu button")
+    .forEach(btn => {
+      btn.classList.remove("active");
+    });
 
-document
-.querySelectorAll(".menu button")
-.forEach(btn =>
-btn.classList.remove("active")
-);
+  button.classList.add("active");
 
-button.classList.add("active");
+  document.getElementById("pageTitle").textContent =
+    button.textContent.trim();
 
-
-document.getElementById("pageTitle")
-.textContent =
-button.textContent.trim();
-
-
-document
-.getElementById("sidebar")
-.classList.remove("open");
-
-
-if (pageId === "calendar") {
-renderCalendar();
-}
-
+  document
+    .getElementById("sidebar")
+    .classList.remove("open");
 }
 
 
 function changeMonth(amount) {
 
-currentDate.setMonth(
-currentDate.getMonth() + amount
-);
+  currentDate.setMonth(
+    currentDate.getMonth() + amount
+  );
 
-renderCalendar();
-
+  renderCalendar();
 }
-
-<script>
-
-/* =========================
-   CALENDAR
-========================= */
-
-function renderCalendar() {
+  function renderCalendar() {
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
-  const monthNames = [
+  const months = [
     "January",
     "February",
     "March",
@@ -517,7 +399,7 @@ function renderCalendar() {
   ];
 
   document.getElementById("monthTitle").textContent =
-    monthNames[month] + " " + year;
+    months[month] + " " + year;
 
   const firstDay =
     new Date(year, month, 1).getDay();
@@ -525,20 +407,17 @@ function renderCalendar() {
   const daysInMonth =
     new Date(year, month + 1, 0).getDate();
 
-  const calendarDays =
+  const container =
     document.getElementById("calendarDays");
 
-  calendarDays.innerHTML = "";
-
+  container.innerHTML = "";
 
   for (let i = 0; i < firstDay; i++) {
 
-    calendarDays.appendChild(
-      document.createElement("div")
-    );
+    const empty = document.createElement("div");
 
+    container.appendChild(empty);
   }
-
 
   for (let day = 1; day <= daysInMonth; day++) {
 
@@ -547,12 +426,9 @@ function renderCalendar() {
       String(month + 1).padStart(2, "0") + "-" +
       String(day).padStart(2, "0");
 
+    const box = document.createElement("div");
 
-    const dayBox =
-      document.createElement("div");
-
-    dayBox.className = "day";
-
+    box.className = "day";
 
     const today = new Date();
 
@@ -561,157 +437,97 @@ function renderCalendar() {
       month === today.getMonth() &&
       year === today.getFullYear()
     ) {
-
-      dayBox.classList.add("today");
-
+      box.classList.add("today");
     }
-
-
-    const status = attendance[dateKey];
 
     let statusText = "";
 
-
-    if (status === "absent") {
+    if (attendance[dateKey] === "absent")
       statusText = "❌ Absent";
-    }
 
-    if (status === "half") {
+    if (attendance[dateKey] === "half")
       statusText = "½ Day";
-    }
 
-    if (status === "full") {
+    if (attendance[dateKey] === "full")
       statusText = "✓ Full";
-    }
 
-    if (status === "onehalf") {
+    if (attendance[dateKey] === "onehalf")
       statusText = "1½ Days";
-    }
 
-    if (status === "two") {
+    if (attendance[dateKey] === "two")
       statusText = "2 Days";
-    }
-
 
     let noteText = "";
 
-    if (notes[dateKey]) {
+    if (notes[dateKey])
       noteText = "📝 Note";
-    }
 
+    box.innerHTML =
+      "<div>" + day + "</div>" +
+      "<div class='status'>" +
+      statusText +
+      "</div>" +
+      "<div class='note'>" +
+      noteText +
+      "</div>";
 
-    dayBox.innerHTML = `
-
-      <div>
-        ${day}
-      </div>
-
-      <div class="status">
-        ${statusText}
-      </div>
-
-      <div class="note">
-        ${noteText}
-      </div>
-
-    `;
-
-
-    dayBox.onclick = function() {
-
+    box.onclick = function() {
       openDate(dateKey);
-
     };
 
-
-    calendarDays.appendChild(dayBox);
-
+    container.appendChild(box);
   }
 
-
   updateSummary();
-
 }
+    function openDate(dateKey) {
 
-
-/* =========================
-   OPEN DATE
-========================= */
-
-function openDate(dateKey) {
-
-  selectedDate = dateKey;
-
-
-  let currentStatus =
+  let current =
     attendance[dateKey] || "";
 
-
-  let note =
-    notes[dateKey] || "";
-
-
-  const choice = prompt(
-
+  let choice = prompt(
     "Date: " + dateKey +
-
     "\n\n" +
-
-    "Choose attendance:" +
-
-    "\n1 = Absent" +
+    "1 = Absent" +
     "\n2 = Half Day" +
     "\n3 = Full Day" +
     "\n4 = Full + Half" +
     "\n5 = 2 Full Days" +
-
     "\n\nCurrent: " +
-    (currentStatus || "Not marked")
-
+    (current || "Not marked")
   );
 
+  if (choice === null) return;
 
-  if (choice === null) {
-    return;
-  }
-
-
-  if (choice === "1") {
+  if (choice === "1")
     attendance[dateKey] = "absent";
-  }
 
-  if (choice === "2") {
+  if (choice === "2")
     attendance[dateKey] = "half";
-  }
 
-  if (choice === "3") {
+  if (choice === "3")
     attendance[dateKey] = "full";
-  }
 
-  if (choice === "4") {
+  if (choice === "4")
     attendance[dateKey] = "onehalf";
-  }
 
-  if (choice === "5") {
+  if (choice === "5")
     attendance[dateKey] = "two";
-  }
-
 
   if (
-    ["1","2","3","4","5"].includes(choice)
+    ["1", "2", "3", "4", "5"].includes(choice)
   ) {
-
     saveData();
-
   }
 
+  let oldNote =
+    notes[dateKey] || "";
 
-  const newNote = prompt(
+  let newNote = prompt(
     "Daily Note:\n\n" +
     "Write work, place, money, materials, etc.",
-    note
+    oldNote
   );
-
 
   if (newNote !== null) {
 
@@ -723,97 +539,59 @@ function openDate(dateKey) {
 
       notes[dateKey] =
         newNote.trim();
-
     }
 
-
     saveData();
-
   }
 
-
   renderCalendar();
-
 }
-
-
-/* =========================
-   SUMMARY
-========================= */
-
-function updateSummary() {
+    function updateSummary() {
 
   let full = 0;
   let half = 0;
   let oneHalf = 0;
   let total = 0;
 
+  Object.values(attendance).forEach(status => {
 
-  Object.values(attendance)
-    .forEach(status => {
+    if (status === "full") {
+      full++;
+      total += 1;
+    }
 
+    if (status === "half") {
+      half++;
+      total += 0.5;
+    }
 
-      if (status === "full") {
+    if (status === "onehalf") {
+      oneHalf++;
+      total += 1.5;
+    }
 
-        full++;
-        total += 1;
+    if (status === "two") {
+      total += 2;
+    }
 
-      }
+  });
 
+  document.getElementById("fullDays").textContent = full;
 
-      if (status === "half") {
+  document.getElementById("halfDays").textContent = half;
 
-        half++;
-        total += 0.5;
+  document.getElementById("oneHalfDays").textContent = oneHalf;
 
-      }
-
-
-      if (status === "onehalf") {
-
-        oneHalf++;
-        total += 1.5;
-
-      }
-
-
-      if (status === "two") {
-
-        total += 2;
-
-      }
-
-    });
-
-
-  document.getElementById("fullDays")
-    .textContent = full;
-
-
-  document.getElementById("halfDays")
-    .textContent = half;
-
-
-  document.getElementById("oneHalfDays")
-    .textContent = oneHalf;
-
-
-  document.getElementById("totalDays")
-    .textContent =
+  document.getElementById("totalDays").textContent =
     total % 1 === 0
       ? total
       : total.toFixed(1);
-
 }
 
-
-/* =========================
-   START
-========================= */
 
 renderCalendar();
 
 </script>
 
 </body>
-</html>
+  </html>
