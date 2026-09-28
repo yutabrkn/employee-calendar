@@ -44,6 +44,7 @@
 </div>
 <script>
 let currentDate = new Date();
+let attendance = JSON.parse(localStorage.getItem("attendance") || "{}");
 
 function showCalendar() {
   let year = currentDate.getFullYear();
@@ -67,15 +68,38 @@ function showCalendar() {
 
   for (let day = 1; day <= totalDays; day++) {
     let button = document.createElement("button");
-    button.innerText = day;
+    let key = year + "-" + month + "-" + day;
+button.innerText = day + (attendance[key] ? " " + attendance[key] : "");
     button.style.padding = "12px 0";
     button.style.border = "1px solid #ddd";
     button.style.borderRadius = "8px";
     button.style.background = "white";
 
     button.onclick = function() {
-      alert("You selected " + day);
-    };
+  let choice = prompt(
+    "Mark attendance:\n" +
+    "1 = Absent\n" +
+    "2 = Half Day\n" +
+    "3 = Full Day\n" +
+    "4 = Full + Half\n" +
+    "5 = 2 Full Days"
+  );
+
+  let status = {
+    "1": "🔴",
+    "2": "🟡",
+    "3": "🟢",
+    "4": "🔵",
+    "5": "🟣"
+  };
+
+  if (status[choice]) {
+  let key = year + "-" + month + "-" + day;
+  attendance[key] = status[choice];
+  localStorage.setItem("attendance", JSON.stringify(attendance));
+  button.innerText = day + " " + status[choice];
+  }
+};
 
     days.appendChild(button);
   }
